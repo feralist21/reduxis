@@ -1,15 +1,21 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { api } from '../api';
 
-const usersApi = createApi({
-    reducerPath: 'usersApi',
-    baseQuery: fetchBaseQuery({ baseUrl: 'https://dummyjson.com/users' }),
+const usersApi = api.injectEndpoints({
     endpoints: (builder) => ({
         getAllUsers: builder.query({
-            query: () => '?limit=10&select=firstName,email,role',
+            query: () => 'https://dummyjson.com/users?limit=10&select=firstName,email,role',
+        }),
+        addNewProduct: builder.mutation({
+            query: (product) => ({
+                url: 'https://dummyjson.com/products/add',
+                method: 'POST',
+                body: product,
+            }),
+            transformResponse(baseQueryReturnValue) {
+                return baseQueryReturnValue;
+            }
         }),
     }),
 });
 
-const { useGetAllUsersQuery } = usersApi;
-
-export { usersApi, useGetAllUsersQuery };
+export const { useGetAllUsersQuery, useAddNewProductMutation } = usersApi;
